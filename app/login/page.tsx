@@ -61,7 +61,7 @@ export default function Login() {
         </form>
         <div className="text-center">
           <Link href="/register" className="text-indigo-600 hover:text-indigo-500">
-            Don't have an account? Register
+            Do not have an account? Register
           </Link>
         </div>
       </div>
