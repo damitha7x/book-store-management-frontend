@@ -24,7 +24,7 @@ jobs:
     - name: Build Next.js app
       run: npm run build
       env:
-        BACKEND_APP_API_URL: https://your-backend-api-url.com  # Set prod API URL here
+        BACKEND_APP_API_URL: ${{ secrets.BACKEND_APP_API_URL }}
 
     - name: Deploy to Vercel
       uses: amondnet/vercel-action@v20
