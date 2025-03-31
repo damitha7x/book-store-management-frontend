@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.BACKEND_APP_API_URL || 'http://localhost:3000',
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true
+  withCredentials: false // Change this to false since we're using token-based auth
 });
 
 api.interceptors.request.use((config) => {

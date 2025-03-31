@@ -12,18 +12,57 @@ interface Book {
 
 export default function BookList() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await api.get('/books');
-        setBooks(response.data);
-      } catch (error) {
-        console.error('Error fetching books:', error);
+        const response = await api.get('/books'); // Update the endpoint
+        console.log('API Response:', response.data);
+        
+        // Handle different possible response structures
+        let booksData;
+        if (response.data.books) {
+          booksData = response.data.books;
+        } else if (response.data.data) {
+          booksData = response.data.data;
+        } else if (Array.isArray(response.data)) {
+          booksData = response.data;
+        } else {
+          console.error('Response structure:', response.data);
+          throw new Error('Unexpected API response structure');
+        }
+
+        if (!Array.isArray(booksData)) {
+          throw new Error('Books data is not an array');
+        }
+
+        setBooks(booksData);
+        setError(null);
+      } catch (error: any) {
+        console.error('Error details:', error.response || error);
+        setError(error.response?.data?.message || 'Failed to load books. Please try again later.');
+        setBooks([]);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchBooks();
   }, []);
+
+  if (loading) {
+    return <div className="text-center p-4">Loading books...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 p-4">{error}</div>;
+  }
+
+  if (!books.length) {
+    return <div className="text-center p-4">No books available.</div>;
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mx-auto p-4">
