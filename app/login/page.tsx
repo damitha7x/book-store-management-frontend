@@ -4,6 +4,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+interface ApiError {
+  response?: {
+    status?: number;
+    data?: {
+      message?: string;
+    };
+  };
+  message: string;
+}
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,9 +31,10 @@ export default function Login() {
       console.log('Login successful');
       setSuccessMessage('Login successful');
       router.push('/books');
-    } catch (error: any) {
-      console.error('Login failed:', error);
-      if (error.response?.status === 401) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      console.error('Login failed:', apiError);
+      if (apiError.response?.status === 401) {
         setErrorMessage('Invalid email or password');
       } else {
         setErrorMessage('An error occurred during login. Please try again.');
