@@ -19,12 +19,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="flex flex-col min-h-screen">
+      <main className="flex-grow">
       <AuthProvider>
         <Navigation />
         {children}
-        <Footer />
       </AuthProvider>
+      </main>
+      <Footer />
       </body>
     </html>
   )
