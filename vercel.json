@@ -2,10 +2,9 @@
   "env": {
     "NEXT_PUBLIC_BACKEND_APP_API_URL": "https://book-store-management-backend.vercel.app/api"
   },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_BACKEND_APP_API_URL": "https://book-store-management-backend.vercel.app/api"
     }
-  ]
+  }
 }
