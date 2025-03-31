@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import api from '@/utils/api';
 
 interface Book {
@@ -10,6 +11,15 @@ interface Book {
   coverImage?: string;
 }
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message: string;
+}
+
 export default function BookList() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,10 +28,9 @@ export default function BookList() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await api.get('/books'); // Update the endpoint
+        const response = await api.get('/books');
         console.log('API Response:', response.data);
         
-        // Handle different possible response structures
         let booksData;
         if (response.data.books) {
           booksData = response.data.books;
@@ -40,9 +49,10 @@ export default function BookList() {
 
         setBooks(booksData);
         setError(null);
-      } catch (error: any) {
-        console.error('Error details:', error.response || error);
-        setError(error.response?.data?.message || 'Failed to load books. Please try again later.');
+      } catch (error: unknown) {
+        const apiError = error as ApiError;
+        console.error('Error details:', apiError);
+        setError(apiError.response?.data?.message || apiError.message || 'Failed to load books');
         setBooks([]);
       } finally {
         setLoading(false);
@@ -69,10 +79,13 @@ export default function BookList() {
       {books.map((book) => (
         <div key={book.id} className="bg-white dark:bg-gray-500 rounded-lg shadow-md overflow-hidden">
           {book.coverImage ? (
-            <img 
-              src={book.coverImage} 
+            <Image
+              src={book.coverImage}
               alt={book.title}
+              width={500}
+              height={300}
               className="w-full h-48 object-cover"
+              priority={false}
             />
           ) : (
             <div className="w-full h-48 bg-gray-200 dark:bg-gray-400 flex items-center justify-center">
