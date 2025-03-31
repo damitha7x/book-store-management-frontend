@@ -6,10 +6,14 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: false // Change this to false since we're using token-based auth
+  withCredentials: false
 });
 
 api.interceptors.request.use((config) => {
+  // Add a timestamp to prevent caching
+  const timestamp = new Date().getTime();
+  config.url = `${config.url}${config.url?.includes('?') ? '&' : '?'}_t=${timestamp}`;
+  
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -17,13 +21,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 404) {
       console.error('Resource not found:', error.config.url);
     }
+    // Add more detailed error logging
+    console.error('API Error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url
+    });
     return Promise.reject(error);
   }
 );

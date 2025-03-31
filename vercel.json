@@ -1,6 +1,6 @@
 {
   "env": {
-    "BACKEND_APP_API_URL": "https://book-store-management-backend.vercel.app/api"
+    "NEXT_PUBLIC_BACKEND_APP_API_URL": "https://book-store-management-backend.vercel.app/api"
   },
   "builds": [
     {
